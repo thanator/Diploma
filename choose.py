@@ -1,5 +1,6 @@
 import xlrd
 import xlwt
+from graphics import *
 # открываем файл
 RB = xlrd.open_workbook('book_1.xls', formatting_info=True)
 # выбираем активный лист
@@ -18,14 +19,11 @@ NUM_STROK = len(SHEET.col_values(6, 3))
 # YACH_1.iks = SHEET.col_values(4, 3) -> x
 # YACH_1.igrik = SHEET.col_values(5, 3) -> y
 
-# print(YACH_1.iks, YACH_1.igrik)
-
 #a = [ [[10, 20],1], [[11, 22],2] ]
 # print(a[0][0][1]) -> 20
 # print(a[0][1]) -> 1
 # print(a[0][0][1]) -> 20
 
-# print(num_stok)
 i = 0
 
 Kord_setka = [0]*NUM_STROK
