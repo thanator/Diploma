@@ -5,7 +5,12 @@ import numpy as np
 import urllib
 import matplotlib.dates as mdates
 import datetime as dt
+from matplotlib import style
 
+style.use('seaborn')
+
+print(plt.style.available)
+print(plt.__file__)
 
 def bytespdate2num(fmt, encoding='utf-8'):
     strconventer = mdates.strpdate2num(fmt)
@@ -48,9 +53,11 @@ def graph_data(stock):
         ohlc.append(append_me)
         x += 1
 
-    candlestick_ohlc(ax1, ohlc, width=0.4,
-                     colorup='#77d879', colordown='#db3f3f')
-
+   # candlestick_ohlc(ax1, ohlc, width=0.4,
+    #                 colorup='#77d879', colordown='#db3f3f')
+    
+    ax1.plot(date,closep)
+    ax1.plot(date,openp)
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
 
