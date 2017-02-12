@@ -32,29 +32,38 @@ def graph_data(stock):
             if 'values' not in line and 'labels' not in line:
                 stock_data.append(line)
 
-    date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
-                                                          delimiter=',',
-                                                          unpack=True)
-
-    dateconv = np.vectorize(dt.datetime.fromtimestamp)
-    date = dateconv(date)
     # date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
     #                                                       delimiter=',',
-    #                                                       unpack=True,
-    # converters={0: bytespdate2num('%Y%m%d')})
+    #                                                       unpack=True)
+
+    # dateconv = np.vectorize(dt.datetime.fromtimestamp)
+    # date = dateconv(date)
+    date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
+                                                          delimiter=',',
+                                                          unpack=True,
+                                                          converters={0: bytespdate2num('%Y%m%d')})
 
     ax1.plot_date(date, closep, '-', label='Price')
+    ax1.plot([], [], linewidth=5, label='loss', color='r', alpha=0.5)
+    ax1.plot([], [], linewidth=5, label='gain', color='g', alpha=0.5)
+    ax1.fill_between(date, closep, closep[0], where=(
+        closep > closep[0]), facecolor='g', alpha=0.3)
+    ax1.fill_between(date, closep, closep[0], where=(
+        closep < closep[0]), facecolor='r', alpha=0.3)
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
-        ax1.grid(True)  # , color='g',linestyle='-')
+    ax1.grid(True)  # , color='g',linestyle='-')
+    ax1.xaxis.label.set_color('c')
+    ax1.yaxis.label.set_color('r')
+    ax1.set_yticks([0, 10, 20, 30, 40])
     plt.xlabel('Date')
     plt.ylabel('Price')
 
-    plt.title('Interesting shit\nCheck it out')
+    plt.title(stock)
     plt.subplots_adjust(left=0.09, bottom=0.18, right=0.94,
                         top=0.90, wspace=0.2, hspace=0)
     plt.legend()
     plt.show()
 
 
-graph_data('TSLA')
+graph_data('EBAY')
