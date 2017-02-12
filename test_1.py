@@ -46,18 +46,27 @@ def graph_data(stock):
     ax1.plot_date(date, closep, '-', label='Price')
     ax1.plot([], [], linewidth=5, label='loss', color='r', alpha=0.5)
     ax1.plot([], [], linewidth=5, label='gain', color='g', alpha=0.5)
+    ax1.axhline(closep[0],color='k',linewidth=2.5)
     ax1.fill_between(date, closep, closep[0], where=(
         closep > closep[0]), facecolor='g', alpha=0.3)
     ax1.fill_between(date, closep, closep[0], where=(
         closep < closep[0]), facecolor='r', alpha=0.3)
+
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
     ax1.grid(True)  # , color='g',linestyle='-')
-    ax1.xaxis.label.set_color('c')
-    ax1.yaxis.label.set_color('r')
+    #ax1.xaxis.label.set_color('c')
+    #ax1.yaxis.label.set_color('r')
     ax1.set_yticks([0, 10, 20, 30, 40])
     plt.xlabel('Date')
     plt.ylabel('Price')
+
+    ax1.spines['left'].set_color('c')
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+
+    ax1.spines['left'].set_linewidth(5)
+    ax1.tick_params (axis='x',colors = '#f06215')
 
     plt.title(stock)
     plt.subplots_adjust(left=0.09, bottom=0.18, right=0.94,
