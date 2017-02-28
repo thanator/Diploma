@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math
 
 
 import xlrd
@@ -138,8 +139,29 @@ Ploshad = [0] * kol_yach
 
 Plosh(x, y, Ploshad, 1)
 
-#
+# делаем из ячеек якобы круги. вычисляем их радиусы
+# совмещаем пункты 8 - 10, т.е. сразу пилим анаморфированные радиусы
 
+R = [0] * kol_yach
+R_shtr = [0] * kol_yach
+i = 0
+for s in Ploshad:
+    R_shtr[i] = math.sqrt(((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
+    R[i] = math.sqrt((s) / (math.pi))
+    i += 1
+
+# Тут начнётся пункт 11-ый. и тут будет цикл, в котором будет происходить
+# какая-то фигня постоянно.
+
+
+Rasst = [0] * kol_yach
+
+i = 0
+for q in Rasst:
+    q = math.sqrt((() + ()))
+
+
+# тут будет конец общего геморра
 
 for i in range(kol_yach):
     plt.plot(x[i], y[i])
