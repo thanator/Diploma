@@ -146,19 +146,51 @@ R = [0] * kol_yach
 R_shtr = [0] * kol_yach
 i = 0
 for s in Ploshad:
-    R_shtr[i] = math.sqrt(((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
+    R_shtr[i] = math.sqrt(
+        ((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
     R[i] = math.sqrt((s) / (math.pi))
     i += 1
 
 # Тут начнётся пункт 11-ый. и тут будет цикл, в котором будет происходить
 # какая-то фигня постоянно.
 
-
-Rasst = [0] * kol_yach
-
 i = 0
-for q in Rasst:
-    q = math.sqrt((() + ()))
+j = 0
+k = 1
+schet = 0
+
+# ПОКА считает только для единственной точки (далее менять i и j, номер
+# ячейки и номер точки соответственно)
+#  пункт 11 - расстояние до центра
+
+Rasst = 0
+Rasst = math.sqrt(((x[i][-1][0] - x[i][j][0])**2) +
+                  (y[i][-1][0] - y[i][j][0])**2)
+
+# пункт 12 - сдвиг
+
+Sdvig = 0
+
+if Rasst <= R[i]:
+    Sdvig = Rasst * ((R_shtr) / (R - 1))
+else:
+    Sdvig = math.sqrt((Rasst)**2 + ((R_shtr)**2 - (R)**2)) - Rasst
+
+# пункт 13 - угол
+
+Alpha = 0
+
+if x[i][j][0] == x[i][-1][0] and y[i][j][0] == y[i][-1][0]:
+    Alpha = 0
+elif x[i][j][0] == x[i][-1][0]:
+        Alpha = 90
+elif y[i][j][0] == y[i][-1][0]:
+    Alpha = 0
+else:
+    Alpha = math.atan((y[i][-1][0] - y[i][j][0])/(x[i][-1][0] - x[i][j][0]))
+
+# пункт 14 - смещение координат
+
 
 
 # тут будет конец общего геморра
