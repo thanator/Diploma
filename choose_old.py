@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import math
-import copy
+
 
 import xlrd
 import xlwt
@@ -136,122 +136,63 @@ Setka_to_XY(x, y, Kord_setka)
 # вызов подсчёта площади
 
 Ploshad = [0] * kol_yach
-Ploshad_t = [0]*kol_yach
 
 Plosh(x, y, Ploshad, 1)
 
 # делаем из ячеек якобы круги. вычисляем их радиусы
-# НИФИГА НЕ совмещаем пункты 8 - 10, т.е. НЕ сразу пилим анаморфированные радиусы
+# совмещаем пункты 8 - 10, т.е. сразу пилим анаморфированные радиусы
 
 R = [0] * kol_yach
 R_shtr = [0] * kol_yach
 i = 0
 for s in Ploshad:
-    R_shtr[i] = math.sqrt(((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
+    R_shtr[i] = math.sqrt(
+        ((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
     R[i] = math.sqrt((s) / (math.pi))
     i += 1
-
-for s in range(kol_yach):
-    Ploshad[s] = Ploshad[s]*Koef_t_Anamorph[s] / Koef_t_Anamorph[kol_yach]
 
 # Тут начнётся пункт 11-ый. и тут будет цикл, в котором будет происходить
 # какая-то фигня постоянно.
 
 i = 0
-
-
-i_for_cen = 0;
+j = 0
 k = 1
 schet = 0
 
-for i in range(kol_yach):
-    plt.plot(x[i], y[i])
-plt.show()
+# ПОКА считает только для единственной точки (далее менять i и j, номер
+# ячейки и номер точки соответственно)
+#  пункт 11 - расстояние до центра
 
-flag = 0
-count = 0
-while(flag==0):
-    i = 0
-    # для рассчёта всякого по i and j
-    while(i < kol_yach):
-        j = 0
-        while (j < len(x[i])-2):
-            i_for_cen = 0
-            #  пункт 11 - расстояние до центра
-            while (i_for_cen < kol_yach):
-                Rasst = 0
-                Rasst = math.sqrt(((x[i_for_cen][-1][0] - x[i][j][0])**2) + (y[i_for_cen][-1][0] - y[i][j][0])**2)
+Rasst = 0
+Rasst = math.sqrt(((x[i][-1][0] - x[i][j][0])**2) +
+                  (y[i][-1][0] - y[i][j][0])**2)
 
-                # пункт 12 - сдвиг
+# пункт 12 - сдвиг
 
-                Sdvig = 0
+Sdvig = 0
 
-                if Rasst <= R[i]:
-                    Sdvig = Rasst * ((R_shtr[i] / R[i]) - 1)
-                else:
-                    Sdvig = math.sqrt((Rasst)**2 + ((R_shtr[i])**2 - (R[i])**2)) - Rasst
+if Rasst <= R[i]:
+    Sdvig = Rasst * ((R_shtr) / (R - 1))
+else:
+    Sdvig = math.sqrt((Rasst)**2 + ((R_shtr)**2 - (R)**2)) - Rasst
 
-                i_cen = 0
-                while (i_cen < kol_yach):
-                    # пункт 13 - угол
+# пункт 13 - угол
 
-                    Alpha = 0
+Alpha = 0
 
-                    if x[i][j][0] == x[i_cen][-1][0] and y[i][j][0] == y[i_cen][-1][0]:
-                        Alpha = 0
-                    elif x[i][j][0] == x[i_cen][-1][0]:
-                        Alpha = 1.570796327
-                    elif y[i][j][0] == y[i_cen][-1][0]:
-                        Alpha = 0
-                    else:
-                        Alpha = math.atan(math.fabs(y[i_cen][-1][0] - y[i][j][0])/math.fabs(x[i_cen][-1][0] - x[i][j][0]))
+if x[i][j][0] == x[i][-1][0] and y[i][j][0] == y[i][-1][0]:
+    Alpha = 0
+elif x[i][j][0] == x[i][-1][0]:
+        Alpha = 90
+elif y[i][j][0] == y[i][-1][0]:
+    Alpha = 0
+else:
+    Alpha = math.atan((y[i][-1][0] - y[i][j][0])/(x[i][-1][0] - x[i][j][0]))
 
-                    # пункт 14 - смещение координат
-                    if (x[i_cen][-1][0] > x[i][j][0]):
-                        x[i][j][0] -= Sdvig*math.cos(Alpha)
-                    else:
-                        x[i][j][0] += Sdvig*math.cos(Alpha)
-                    if (y[i_cen][-1][0] > y[i][j][0]):
-                        y[i][j][0] -= Sdvig*math.sin(Alpha)
-                    else:
-                        y[i][j][0] += Sdvig*math.sin(Alpha)   
+# пункт 14 - смещение координат
 
-                    i_cen += 1
-                    i_for_cen += 1
-                j += 1
-                if (j == len(x[i])-2):          # для запихивания в конец (предпосл. место) первой точки, для правильной отрисовки
-                    x[i][j][0] = x[i][0][0]
-                    y[i][j][0] = y[i][0][0]
-        i += 1
-        if (i == kol_yach):                 # рассчёт центральной точки
-            schet = 0
-            while (schet != kol_yach):
-                schet_1 = 0
-                schet_2 = 0
-                k = 0
-                while (k < len(x[schet])-2):
-                    schet_1 += x[schet][k][0]
-                    schet_2 += y[schet][k][0]
-                    k += 1
-                x[schet][-1][0] = schet_1/k
-                y[schet][-1][0] = schet_2/k
-                schet += 1
-
-            # перерасчёт плозади
-            Plosh(x ,y , Ploshad_t, 1)
-
-            flag = 1
-            count += 1
-            for pis in range(kol_yach):     # проверка на окончание этой адской фигни
-                if ((Ploshad[pis]-Ploshad_t[pis])>0.01):
-                    flag = 0
-
-            if (count%10==0):
-                 for i in range(kol_yach):
-                     plt.plot(x[i], y[i])
-                 plt.show()
-
-
+x[i] = Sdvig*math.cos(Alpha);
+y[i] = Sdvig*math.sin(Alpha);
 
 # тут будет конец общего геморра
 
