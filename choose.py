@@ -267,7 +267,7 @@ while(flag==0):
                 y[schet][-1][0] = schet_2/k
                 schet += 1
 
-            # перерасчёт плозади
+            # переразчёт плозади
             Plosh(x ,y , Ploshad_t, 1)
 
             flag = 1
@@ -276,7 +276,7 @@ while(flag==0):
                 if ((Ploshad[pis]-Ploshad_t[pis])>0.01):
                     flag = 0
             print (count, end='\n')
-            if (count%1==0):
+            if (count%2==0):
                  for i in range(kol_yach):
                      plt.plot(x[i], y[i])
                  plt.show()
