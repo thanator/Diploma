@@ -1,8 +1,9 @@
 import math
 
-alpha = [[[1],2,3,4],[5,6]]
-c = 1.5708
+x = 10
+y = -2
+z = x + y
 
-d = math.sin(c)
 
-print(d)
+
+print(z)

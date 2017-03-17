@@ -73,6 +73,26 @@ def Plosh(X_temp, Y_temp, S_temp, Koef_temp):
         schet_temp = 0
         k_temp += 1
 
+# функция для смещения координат
+
+def Smech(X_temp, Y_temp, x_smes, y_smes, ind_i, ind_j):
+    vrem_x = X_temp[ind_i][ind_j][0]
+    vrem_y = Y_temp[ind_i][ind_j][0]
+    i_ind = 0
+    j_ind = 0
+    while(i_ind<kol_yach):
+        j_ind = 0
+        while(j_ind<len(X_temp[i_ind])-2):
+            
+            if(X_temp[i_ind][j_ind][0] == vrem_x):
+                if(Y_temp[i_ind][j_ind][0] == vrem_y):
+                    X_temp[i_ind][j_ind][0] += x_smes
+                    Y_temp[i_ind][j_ind][0] += y_smes
+
+            j_ind += 1
+        i_ind += 1
+
+
 RB = xlrd.open_workbook('book_1.xls', formatting_info=True)
 # выбираем активный лист
 SHEET = RB.sheet_by_index(0)
@@ -146,6 +166,12 @@ Plosh(x, y, Ploshad, 1)
 R = [0] * kol_yach
 R_shtr = [0] * kol_yach
 i = 0
+
+for s in Ploshad:
+    Ploshad[i]= math.fabs(s)
+    i += 1
+i = 0
+
 for s in Ploshad:
     R_shtr[i] = math.sqrt(((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])))
     R[i] = math.sqrt((s) / (math.pi))
@@ -163,6 +189,8 @@ i = 0
 i_for_cen = 0;
 k = 1
 schet = 0
+x_smesh = 0
+y_smesh = 0
 
 for i in range(kol_yach):
     plt.plot(x[i], y[i])
@@ -208,13 +236,15 @@ while(flag==0):
 
                     # пункт 14 - смещение координат
                     if (x[i_cen][-1][0] > x[i][j][0]):
-                        x[i][j][0] -= Sdvig*math.cos(Alpha)
+                        x_smesh = -1*( Sdvig*math.cos(Alpha))
                     else:
-                        x[i][j][0] += Sdvig*math.cos(Alpha)
+                        x_smesh = Sdvig*math.cos(Alpha)
                     if (y[i_cen][-1][0] > y[i][j][0]):
-                        y[i][j][0] -= Sdvig*math.sin(Alpha)
+                        y_smesh = -1*(Sdvig*math.sin(Alpha))
                     else:
-                        y[i][j][0] += Sdvig*math.sin(Alpha)   
+                        y_smesh = Sdvig*math.sin(Alpha) 
+
+                    Smech(x,y,x_smesh,y_smesh,i,j)
 
                     i_cen += 1
                     i_for_cen += 1
@@ -245,8 +275,8 @@ while(flag==0):
             for pis in range(kol_yach):     # проверка на окончание этой адской фигни
                 if ((Ploshad[pis]-Ploshad_t[pis])>0.01):
                     flag = 0
-
-            if (count%10==0):
+            print (count, end='\n')
+            if (count%1==0):
                  for i in range(kol_yach):
                      plt.plot(x[i], y[i])
                  plt.show()
