@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
 import math
 import copy
-
 import xlrd
 import xlwt
-
 
 # функция для преобращования массива с координатами в массив для рисования
 def Setka_to_XY(X_temp, Y_temp, Setka):
@@ -53,13 +51,18 @@ def Setka_to_XY(X_temp, Y_temp, Setka):
 
 # функция для вычисления площади
 
-
 def Plosh(X_temp, Y_temp, S_temp, Koef_temp):
     i_temp = 0
     k_temp = 1
     j_temp = 0
     schet_temp = 0
+    
     for i_temp in range(kol_yach):
+        S_temp[i_temp]=0
+
+    i_temp = 0
+
+    for i_temp in range(kol_yach): # кол-во ячеек
         while k_temp == Kord_setka[j_temp][1][0]:
             if k_temp == Kord_setka[j_temp + 1][1][0]:
                 S_temp[i_temp] += (X_temp[i_temp][schet_temp][0] - X_temp[i_temp][schet_temp + 1][
@@ -92,16 +95,13 @@ def Smech(X_temp, Y_temp, x_smes, y_smes, ind_i, ind_j):
             j_ind += 1
         i_ind += 1
 
-
 RB = xlrd.open_workbook('book_1.xls', formatting_info=True)
 # выбираем активный лист
 SHEET = RB.sheet_by_index(0)
 
 # COL_OF_YACH = SHEET.row_values(1, 2, 3) -> 2
 
-
 NUM_STROK = len(SHEET.col_values(6, 3))
-
 
 i = 0
 
@@ -133,7 +133,7 @@ for pis in range(kol_yach):
 sis = (sis / (len(Koef_t_Anamorph)))
 
 Koef_t_Anamorph.append(sis)
-# ПОдсчёт коэф-то анаморфирования
+# Пoдсчёт коэф-то анаморфирования
 x = [0] * kol_yach
 y = [0] * kol_yach
 # будущие Х и У
@@ -150,6 +150,9 @@ for i in range(kol_yach):
     y[i] = [0] * schet
     schet = 0
     k += 1
+
+zero_x = copy.deepcopy(x)
+zero_y = copy.deepcopy(y)
 # создание массива для будущего вывода
 Setka_to_XY(x, y, Kord_setka)
 
@@ -161,7 +164,7 @@ Ploshad_t = [0]*kol_yach
 Plosh(x, y, Ploshad, 1)
 
 # делаем из ячеек якобы круги. вычисляем их радиусы
-# НИФИГА НЕ совмещаем пункты 8 - 10, т.е. НЕ сразу пилим анаморфированные радиусы
+# 
 
 R = [0] * kol_yach
 R_shtr = [0] * kol_yach
@@ -185,7 +188,6 @@ for s in range(kol_yach):
 
 i = 0
 
-
 i_for_cen = 0;
 k = 1
 schet = 0
@@ -196,9 +198,111 @@ for i in range(kol_yach):
     plt.plot(x[i], y[i])
 plt.show()
 
+test = len(x)
+kol_kor = 0
+while (test != 0):
+    kol_kor += len(x[test-1])
+    test -= 1
+flag = 0
+count = 0
+while (flag == 0):
+    temp_x = copy.deepcopy(zero_x)
+    temp_y = copy.deepcopy(zero_y)
+    t = 0
+    while (t < kol_yach):
+
+        j = 0
+        while (j < len(x[t]) - 1):
+            
+            x_smesh = 0
+            y_smesh = 0
+
+            i = 0
+            x_i = x[t][j][0]
+            y_i = y[t][j][0]
+            while (i < kol_yach):               
+               
+                x_c = x[i][len(x[i]) - 1][0]
+                y_c = y[i][len(y[i]) - 1][0]
+                
+                L = math.sqrt((x_c - x_i)**2 + (y_c - y_i)**2)
+                
+                if (L <= R[i]):
+                    L_sm = L * (R_shtr[i]/R[i] - 1)
+                else:
+                    L_sm = math.sqrt(L**2 + ((R_shtr[i])**2 - (R[i])**2)) - L
+                if (x_c == x_i and y_c == y_i):
+                    Alpha = 0
+                elif (x_c == x_i):
+                    Alpha = 1.570796327
+                elif (y_c == y_i):
+                    Alpha = 0
+                else:
+                    Alpha = math.atan(math.fabs(y_c - y_i)/math.fabs(x_c - x_i))
+                
+                XX = L_sm*math.cos(Alpha)
+                if (x_c > x_i):
+                    XX = -XX
+                YY = L_sm*math.sin(Alpha)
+                if (y_c > y_i):
+                    YY = -YY
+
+                x_smesh += XX
+                y_smesh += YY
+
+                i += 1
+            
+            temp_x[t][j] = x_smesh
+            temp_y[t][j] = y_smesh
+            j += 1
+
+        t += 1
+    
+    t = 0
+
+    while (t < kol_yach):
+        j = 0
+        while (j < len(x[t]) - 1):
+            x[t][j][0] += temp_x[t][j]
+            y[t][j][0] += temp_y[t][j]
+            j += 1
+        t += 1
+
+    schet = 0
+    while (schet != kol_yach):
+        schet_1 = 0
+        schet_2 = 0
+        k = 0
+        while (k < len(x[schet])-2):
+            schet_1 += x[schet][k][0]
+            schet_2 += y[schet][k][0]
+            k += 1
+        x[schet][-1][0] = schet_1/k
+        y[schet][-1][0] = schet_2/k
+        schet += 1
+
+    temp_x = copy.deepcopy(zero_x)
+    temp_y = copy.deepcopy(zero_y)
+
+    schet = 0
+    Plosh(x ,y , Ploshad_t, 1)
+    for pis in range(kol_yach):     # проверка на окончание этой адской фигни
+        if (math.fabs(Ploshad_t[pis]-Ploshad[pis])<=0.01):
+            flag = 0
+    for i in range(kol_yach):
+        plt.plot(x[i], y[i])
+
+    plt.show()
+    
+
+
+
+'''
 flag = 0
 count = 0
 while(flag==0):
+    temp_x = copy.deepcopy(zero_x)
+    temp_y = copy.deepcopy(zero_y)
     i = 0
     # для рассчёта всякого по i and j
     while(i < kol_yach):
@@ -215,10 +319,9 @@ while(flag==0):
                 Sdvig = 0
 
                 if Rasst <= R[i]:
-                    Sdvig = Rasst * ((R_shtr[i] / R[i]) - 1)
+                    Sdvig = Rasst * (R_shtr[i] / R[i] - 1)
                 else:
                     Sdvig = math.sqrt((Rasst)**2 + ((R_shtr[i])**2 - (R[i])**2)) - Rasst
-
                 i_cen = 0
                 while (i_cen < kol_yach):
                     # пункт 13 - угол
@@ -242,16 +345,34 @@ while(flag==0):
                     if (y[i_cen][-1][0] > y[i][j][0]):
                         y_smesh = -1*(Sdvig*math.sin(Alpha))
                     else:
-                        y_smesh = Sdvig*math.sin(Alpha) 
-
-                    Smech(x,y,x_smesh,y_smesh,i,j)
+                        y_smesh = Sdvig*math.sin(Alpha)
+                    temp_x[i][j] += x_smesh
+                    temp_y[i][j] += y_smesh
+                    #Smech(x,y,x_smesh,y_smesh,i,j)
 
                     i_cen += 1
                     i_for_cen += 1
+                
                 j += 1
                 if (j == len(x[i])-2):          # для запихивания в конец (предпосл. место) первой точки, для правильной отрисовки
-                    x[i][j][0] = x[i][0][0]
-                    y[i][j][0] = y[i][0][0]
+                    temp_x[i][j] = temp_x[i][0]
+                    temp_y[i][j] = temp_y[i][0]
+
+        
+
+        p = 0
+        while (p < kol_yach):
+            o = 0
+            while (o < len(x[p]) - 2):
+                
+                x[p][o][0] += temp_x[p][o]
+                y[p][o][0] += temp_y[p][o]
+
+
+                o += 1
+            p += 1
+
+
         i += 1
         if (i == kol_yach):                 # рассчёт центральной точки
             schet = 0
@@ -273,23 +394,37 @@ while(flag==0):
             flag = 1
             count += 1
             for pis in range(kol_yach):     # проверка на окончание этой адской фигни
-                if ((Ploshad[pis]-Ploshad_t[pis])>0.01):
+                if ((Ploshad_t[pis]-Ploshad[pis])<=0.01):
                     flag = 0
             print (count, end='\n')
-            if (count%2==0):
-                 for i in range(kol_yach):
-                     plt.plot(x[i], y[i])
-                 plt.show()
 
+            #temp_x = copy.deepcopy(x)
+            #temp_y = copy.deepcopy(y)
 
+            if (count%999==0):
+                #  f = open('output_bef.txt', 'w')
 
+                #  for item in range(kol_yach):
+                #     f.write(str(x[item]) + "--" + y[item] + '\n')
+                #  f.close()
+                
+                #for i in range(kol_yach):
+                #   plt.plot(temp_x[i], temp_y[i])
+                #plt.show()
+                
+                #  q = open('output_aft.txt','w')
+                #  for item in range(x):
+                #     q.write(str(x[item]) + "--" + y[item] + '\n')
+                #  q.close()
+                print('New Iteration')
+            #del temp_x[:]
+            #del temp_y[:]
 # тут будет конец общего геморра
-
+'''
 for i in range(kol_yach):
     plt.plot(x[i], y[i])
 
 plt.show()
-
 
 for pis in range(len(Koef_t_Anamorph)):
     print(Koef_t_Anamorph[pis])

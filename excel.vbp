@@ -1,0 +1,174 @@
+Private Sub UserForm_Initialize()
+OptionButton1.Value = True
+End Sub
+Private Sub CommandButton1_Click()
+Unload Me
+'=====================================================
+
+ReDim X(1000) As Single
+ReDim Y(1000) As Single
+ReDim Плотн(100) As Single
+ReDim Xцт(1000) As Single
+ReDim Yцт(1000) As Single
+ReDim Sреал(400, 50) As Single
+ReDim S(400, 50) As Single: ReDim Ss(400, 500) As Single
+ReDim Rреал(50) As Single
+ReDim Sср(400, 50) As Single
+ReDim Rср(100) As Single
+ReDim X1(200) As Single
+ReDim Y1(200) As Single
+ReDim L(43, 43) As Single
+ReDim Lсмещ(43, 43) As Single
+ReDim Угол(100, 100) As Single
+ReDim XX(43, 43) As Single
+ReDim YY(43, 43) As Single
+'==================================================================
+Range("A1").Select
+'Очистка диапазона
+Range("E4:F10000").Clear
+Range("L2:M10000").Clear
+'Заданная погрешность вычислений
+Epsilon = Selection.Cells(1, 3).Value
+'Количество фигур
+N = Selection.Cells(2, 3).Value
+'Коэффициент анаморфированияя в ячейках
+If OptionButton1.Value = False Then GoTo 20 Else GoTo 22
+20 СрПлотн = CDbl(TextBox1.Text): GoTo 24
+22 Плотн(0) = 0
+For i = 1 To N
+Плотн(i) = Selection.Cells(3 + i, 3).Value
+Плотн(i) = Плотн(i) + Плотн(i - 1)
+СрПлотн = Плотн(i) / N
+Next i
+24 Selection.Cells(3, 3).Value = СрПлотн
+
+'==================================================================
+'Расчет значений Sреал(i)и др. значений на ее основе
+S(0, 1) = 0
+Sреал(0, 0) = 0
+t = 1
+v = 0
+For k = 0 To (N - 1) * 41 Step 41
+P = Selection.Cells(3 + t, 4).Value 'число точек каждой ячейки
+For j = 1 To P - 1
+X1(j) = Selection.Cells(2 + j + k, 10).Value
+Y1(j) = Selection.Cells(2 + j + k, 11).Value
+If j = P - 1 Then S(v, j) = (X1(j) - X1(1)) * (Y1(j) + Y1(1)) Else GoTo 15
+GoTo 16
+15 X1(j + 1) = Selection.Cells(3 + j + k, 10)
+Y1(j + 1) = Selection.Cells(3 + j + k, 11)
+S(v, j) = (X1(j) - X1(j + 1)) * (Y1(j) + Y1(j + 1))
+16 S(v, j) = S(v, j - 1) + S(v, j)
+'Selection.Cells(2 + j + k, 13).Value = S(v, j)
+Next j
+Sреал(v, t) = 0.5 * S(v, P - 1)
+Rреал(t) = (Sреал(v, t) / 3.1415) ^ 0.5
+Плотн(t) = Selection.Cells(t + 3, 3).Value
+Sср(0, t) = Sреал(v, t) * (Плотн(t) / СрПлотн)
+Rср(t) = (Sср(v, t) / 3.1415) ^ 0.5
+Selection.Cells(t + 3, 5).Value = Sср(0, t)
+t = t + 1
+Next k
+'Расчет воздействия каждого ЦТ на каждую точку каждой ячейки
+'воздействие всех ЦТ на все точки всех ячеек
+'--------------------------------------------------------------------------
+c = 0
+18 S(0, 0) = 0
+Sреал(0, 0) = 0
+t = 1
+For k = 0 To (N - 1) * 41 Step 41
+'Расчет значений Sреал(i)и др. значений на ее основе
+'Расстояние от всех ЦТ до всех точек одной ячейки
+XX(0, 1) = 0
+YY(0, 0) = 0
+For j = 1 To Selection.Cells(3 + t, 4).Value
+'f = 0
+If c = 0 Then
+X(j) = Selection.Cells(1 + j + k, 10).Value
+Y(j) = Selection.Cells(1 + j + k, 11).Value
+Else
+X(j) = Selection.Cells(1 + j + k, 12).Value
+Y(j) = Selection.Cells(1 + j + k, 13).Value
+End If
+For i = 1 To N
+If c = 0 Then
+Xцт(i) = Selection.Cells(2 + (i - 1) * 41, 10).Value
+Yцт(i) = Selection.Cells(2 + (i - 1) * 41, 11).Value
+Else
+Xцт(i) = Selection.Cells(2 + (i - 1) * 41, 12).Value
+Yцт(i) = Selection.Cells(2 + (i - 1) * 41, 13).Value
+End If
+L(i, j) = ((Xцт(i) - X(j)) ^ 2 + (Yцт(i) - Y(j)) ^ 2) ^ 0.5
+'-------------------------------------------------------------------
+'Определение зоны влияния ЦТ на точку
+'If CheckBox1.Value = True Then G = CDbl(TextBox2.Text) Else GoTo 32
+'If L(i, j) >= G * Rср(t) Then GoTo 30 Else GoTo 32
+'30 f = f + 1: GoTo 31
+'-------------------------------------------------------------------
+'Смещение точки ячейки от воздействия всех ЦТ
+32 If L(i, j) <= Rреал(i) Then
+Lсмещ(i, j) = L(i, j) * (Rср(i) / Rреал(i) - 1)
+Else
+Lсмещ(i, j) = (L(i, j) ^ 2 + (Rср(i) ^ 2 - Rреал(i) ^ 2)) ^ 0.5 - L(i, j)
+End If
+'======================================================================
+'Расчет угла между прямой соед. вершину c точкой воздействия и осью OX
+If Xцт(i) = X(j) And Yцт(i) = Y(j) Then Угол(i, j) = 0 Else GoTo 4
+GoTo 2
+4 If Xцт(i) = X(j) Then Угол(i, j) = 1.570796327 Else GoTo 1
+GoTo 2
+1 If Yцт(i) = Y(j) Then Угол(i, j) = 0 Else GoTo 3
+GoTo 2
+3 Угол(i, j) = (Atn(Abs(Yцт(i) - Y(j)) / Abs(Xцт(i) - X(j))))
+2 XX(i, j) = Lсмещ(i, j) * Cos(Угол(i, j))
+If Xцт(i) > X(j) Then XX(i, j) = -XX(i, j) Else GoTo 5
+5 YY(i, j) = Lсмещ(i, j) * Sin(Угол(i, j))
+If Yцт(i) > Y(j) Then YY(i, j) = -YY(i, j) Else GoTo 6
+'==================================================================
+6 XX(i, j) = XX(i - 1, j) + XX(i, j)
+YY(i, j) = YY(i - 1, j) + YY(i, j)
+'f = 0
+31 Next i
+X1(j) = X(j) + XX(N, j)
+Y1(j) = Y(j) + YY(N, j)
+'If j = 1 Then GoTo 33 Else GoTo 34
+34 Selection.Cells(1 + j + k, 12).Value = X1(j)
+Selection.Cells(1 + j + k, 13).Value = Y1(j)
+
+'==================================================================
+33 Next j
+t = t + 1
+Next k
+'==================================================================
+'==================================================================
+S(0, 0) = 0
+Sреал(0, 0) = 0
+t = 1
+v = v + 1
+w = 0
+For k = 2 To ((N + 1) * 41) + 5 Step 41
+P = Selection.Cells(3 + t, 4).Value
+For j = 1 To P
+X1(j) = Selection.Cells(k + j, 12).Value
+Y1(j) = Selection.Cells(k + j, 13).Value
+If j = P Then S(v, j) = (X1(j) - X1(1)) * (Y1(j) + Y1(1)) Else GoTo 9
+S(v, j) = S(v, j - 1) + S(v, j)
+GoTo 10
+9 X1(j + 1) = Selection.Cells(k + j + 1, 12)
+Y1(j + 1) = Selection.Cells(k + j + 1, 13)
+S(v, j) = (X1(j) - X1(j + 1)) * (Y1(j) + Y1(j + 1))
+S(v, j) = S(v, j - 1) + S(v, j)
+Next j
+'==================================================================
+10 Sреал(v, t) = 0.5 * S(v, P): Selection.Cells(t + 3, 6).Value = Sреал(v, t)
+Rреал(t) = (Sреал(v, t) / 3.1415) ^ 0.5
+Sср(v, t) = Selection.Cells(t + 3, 5).Value
+If Abs(Sср(v, t) - Sреал(v, t)) <= Epsilon Then w = w + 1 Else GoTo 19
+If w >= N Then GoTo 1000 Else GoTo 19
+19 t = t + 1
+Next k
+c = c + 2
+GoTo 18
+'==================================================================
+'==================================================================
+1000 End Sub
