@@ -176,7 +176,7 @@ for s in Ploshad:
 i = 0
 
 for s in Ploshad:
-    R_shtr[i] = math.sqrt(((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach]))) # Rcp
+    R_shtr[i] = math.sqrt((s * Koef_t_Anamorph[i]) / (math.pi * Koef_t_Anamorph[kol_yach])) # Rcp
     R[i] = math.sqrt((s) / (math.pi))   # Rrl
     i += 1
 
@@ -224,15 +224,16 @@ while (flag == 0):
             while (i < kol_yach):
                 # по всем центрам            
                
-                x_c = x[i][len(x[i]) - 1][0]
-                y_c = y[i][len(y[i]) - 1][0]
+                x_c = x[i][-1][0]
+                y_c = y[i][-1][0]
                 
                 L = math.sqrt((x_c - x_i)**2 + (y_c - y_i)**2)
-                
+                # смещение точки 
                 if (L <= R[i]):
                     L_sm = L * (R_shtr[i]/R[i] - 1)
                 else:
                     L_sm = math.sqrt(L**2 + ((R_shtr[i])**2 - (R[i])**2)) - L
+                # расчёт угла
                 if (x_c == x_i and y_c == y_i):
                     Alpha = 0
                 elif (x_c == x_i):
@@ -241,7 +242,7 @@ while (flag == 0):
                     Alpha = 0
                 else:
                     Alpha = math.atan(math.fabs(y_c - y_i)/math.fabs(x_c - x_i))
-                
+                # расчёт смещения
                 XX = L_sm*math.cos(Alpha)
                 if (x_c > x_i):
                     XX = -1*XX
@@ -253,22 +254,13 @@ while (flag == 0):
                 y_smesh += YY
 
                 i += 1
-            
-            temp_x[t][j] = x_smesh
-            temp_y[t][j] = y_smesh
+            x[t][j][0] += x_smesh
+            y[t][j][0] += y_smesh
             j += 1
 
         t += 1
     
-    t = 0
 
-    while (t < kol_yach):
-        j = 0
-        while (j < len(x[t]) - 1):
-            x[t][j][0] += temp_x[t][j]
-            y[t][j][0] += temp_y[t][j]
-            j += 1
-        t += 1
 
     schet = 0
     while (schet != kol_yach):
@@ -295,11 +287,7 @@ while (flag == 0):
         pis += 1
     
     for s in range(kol_yach):
-        Ploshad_t[s] = Ploshad_t[s]*Koef_t_Anamorph[s] / Koef_t_Anamorph[kol_yach]       
-    
-
-
-
+        Ploshad_t[s] = Ploshad_t[s]*Koef_t_Anamorph[s] / Koef_t_Anamorph[kol_yach]    
 
     for pis in range(kol_yach):     # проверка на окончание этой адской фигни
         if (math.fabs(Ploshad_t[pis]-Ploshad[pis])<=0.01):
