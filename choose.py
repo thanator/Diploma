@@ -71,6 +71,33 @@ def Plosh(X_temp, Y_temp, S_temp, Koef_temp):
                 S_temp[i_temp] += (X_temp[i_temp][schet_temp][0] - X_temp[i_temp][0][0]) * (
                     Y_temp[i_temp][schet_temp][0] + Y_temp[i_temp][0][0])
                 S_temp[i_temp] = S_temp[i_temp] / 2
+                S_temp[i_temp] = math.fabs(S_temp[i_temp])
+            j_temp += 1
+            schet_temp += 1
+        schet_temp = 0
+        k_temp += 1
+
+def Plosh_new(X_temp, Y_temp, S_temp, Koef_temp):
+    i_temp = 0
+    k_temp = 1
+    j_temp = 0
+    schet_temp = 0
+    
+    for i_temp in range(kol_yach):
+        S_temp[i_temp]=0
+
+    i_temp = 0
+
+    for i_temp in range(kol_yach): # кол-во ячеек
+        while k_temp == Kord_setka[j_temp][1][0]:
+            if k_temp == Kord_setka[j_temp + 1][1][0]:
+                S_temp[i_temp] += (X_temp[i_temp][schet_temp][0]*Y_temp[i_temp][schet_temp + 1][0] - X_temp[i_temp][schet_temp + 1][
+                                   0] * Y_temp[i_temp][schet_temp][0] )
+            else:
+                S_temp[i_temp] += (X_temp[i_temp][schet_temp][0]*Y_temp[i_temp][0][0] - X_temp[i_temp][0][
+                                   0] * Y_temp[i_temp][schet_temp][0] )
+                S_temp[i_temp] = S_temp[i_temp] / 2
+                S_temp[i_temp] = math.fabs(S_temp[i_temp])
             j_temp += 1
             schet_temp += 1
         schet_temp = 0
@@ -161,7 +188,7 @@ Setka_to_XY(x, y, Kord_setka)
 Ploshad = [0] * kol_yach
 Ploshad_t = [0]*kol_yach
 
-Plosh(x, y, Ploshad, 1)
+Plosh_new(x, y, Ploshad, 1)
 
 # делаем из ячеек якобы круги. вычисляем их радиусы
 # 
@@ -172,6 +199,7 @@ i = 0
 
 for s in Ploshad:
     Ploshad[i]= math.fabs(s)
+    print(s)
     i += 1
 i = 0
 
@@ -182,6 +210,8 @@ for s in Ploshad:
 
 for s in range(kol_yach):
     Ploshad[s] = Ploshad[s]*Koef_t_Anamorph[s] / Koef_t_Anamorph[kol_yach]
+    print(Ploshad[s])
+
 
 # Тут начнётся пункт 11-ый. и тут будет цикл, в котором будет происходить
 # какая-то фигня постоянно.
@@ -213,11 +243,10 @@ while (flag == 0):
     while (t < kol_yach):
         # самое начало - для каждой из ячеек
         j = 0
-        while (j < len(x[t]) - 1):
+        
+        while (j < len(x[t]) - 2):
             # для каждой из точек
-            x_smesh = 0
-            y_smesh = 0
-
+            
             i = 0
             x_i = x[t][j][0]
             y_i = y[t][j][0]
@@ -242,7 +271,15 @@ while (flag == 0):
                     Alpha = 0
                 else:
                     Alpha = math.atan(math.fabs(y_c - y_i)/math.fabs(x_c - x_i))
+                
+                
+                
+                # if (R_shtr[i] > R[i]):
+                #     L_sm *= -1
+                
+                
                 # расчёт смещения
+
                 XX = L_sm*math.cos(Alpha)
                 if (x_c > x_i):
                     XX = -1*XX
@@ -250,17 +287,19 @@ while (flag == 0):
                 if (y_c > y_i):
                     YY = -1*YY
 
-                x_smesh += XX
-                y_smesh += YY
+                temp_x[t][j] += XX
+                temp_y[t][j] += YY
 
                 i += 1
-            x[t][j][0] += x_smesh
-            y[t][j][0] += y_smesh
+            x[t][j][0] += temp_x[t][j]
+            y[t][j][0] += temp_y[t][j]           
+                
             j += 1
+            if (j == len(x[t]) - 2):
+                 x[t][j][0] = x[t][0][0]
+                 y[t][j][0] = y[t][0][0]
 
         t += 1
-    
-
 
     schet = 0
     while (schet != kol_yach):
@@ -277,25 +316,30 @@ while (flag == 0):
 
     schet = 0
 
-    Plosh(x ,y , Ploshad_t, 1)
-    Plosh(x ,y , Ploshad, 1)
+    Ploshad = copy.deepcopy(Ploshad_t)
+    Plosh_new(x ,y , Ploshad_t, 1)
     pis = 0
 
     for s in Ploshad_t:
-        R_shtr[pis] = math.sqrt(((s * Koef_t_Anamorph[pis]) / (math.pi * Koef_t_Anamorph[kol_yach]))) # Rcp
+        #R_shtr[pis] = math.sqrt(((s * Koef_t_Anamorph[pis]) / (math.pi * Koef_t_Anamorph[kol_yach]))) # Rcp
         R[pis] = math.sqrt((s) / (math.pi))   # Rrl
         pis += 1
     
     for s in range(kol_yach):
         Ploshad_t[s] = Ploshad_t[s]*Koef_t_Anamorph[s] / Koef_t_Anamorph[kol_yach]    
+        print(Ploshad_t[s])
 
     for pis in range(kol_yach):     # проверка на окончание этой адской фигни
         if (math.fabs(Ploshad_t[pis]-Ploshad[pis])<=0.01):
-            flag = 0
-    for i in range(kol_yach):
-        plt.plot(x[i], y[i])
+            i_for_cen += 1
+    if (i_for_cen == kol_yach):
+        flag=1
+    else:
+        i_for_cen=0
+    # for i in range(kol_yach):
+    #     plt.plot(x[i], y[i])
 
-    plt.show()
+    # plt.show()
     
 
 
@@ -392,7 +436,7 @@ while(flag==0):
                 schet += 1
 
             # переразчёт плозади
-            Plosh(x ,y , Ploshad_t, 1)
+            Plosh_new(x ,y , Ploshad_t, 1)
 
             flag = 1
             count += 1
