@@ -1,5 +1,6 @@
 from tkinter import *
 from choose import *
+from create import *
 
 
 
@@ -44,7 +45,8 @@ class CREATE_GUI:
         self.but.grid_forget()
         self.tex.grid_forget()
         self.butt.grid_forget()
-        Anamorph("book_1.xls")
+        create(7)
+        Anamorph("example.xls")
         
         
 
