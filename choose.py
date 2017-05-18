@@ -122,7 +122,7 @@ def Smech(X_temp, Y_temp, x_smes, y_smes, ind_i, ind_j):
             j_ind += 1
         i_ind += 1
 
-RB = xlrd.open_workbook('book_1.xls', formatting_info=True)
+RB = xlrd.open_workbook('temp_1.xls', formatting_info=True)
 # выбираем активный лист
 SHEET = RB.sheet_by_index(0)
 
@@ -342,132 +342,6 @@ while (flag == 0):
     # plt.show()
     
 
-
-
-'''
-flag = 0
-count = 0
-while(flag==0):
-    temp_x = copy.deepcopy(zero_x)
-    temp_y = copy.deepcopy(zero_y)
-    i = 0
-    # для рассчёта всякого по i and j
-    while(i < kol_yach):
-        j = 0
-        while (j < len(x[i])-2):
-            i_for_cen = 0
-            #  пункт 11 - расстояние до центра
-            while (i_for_cen < kol_yach):
-                Rasst = 0
-                Rasst = math.sqrt(((x[i_for_cen][-1][0] - x[i][j][0])**2) + (y[i_for_cen][-1][0] - y[i][j][0])**2)
-
-                # пункт 12 - сдвиг
-
-                Sdvig = 0
-
-                if Rasst <= R[i]:
-                    Sdvig = Rasst * (R_shtr[i] / R[i] - 1)
-                else:
-                    Sdvig = math.sqrt((Rasst)**2 + ((R_shtr[i])**2 - (R[i])**2)) - Rasst
-                i_cen = 0
-                while (i_cen < kol_yach):
-                    # пункт 13 - угол
-
-                    Alpha = 0
-
-                    if x[i][j][0] == x[i_cen][-1][0] and y[i][j][0] == y[i_cen][-1][0]:
-                        Alpha = 0
-                    elif x[i][j][0] == x[i_cen][-1][0]:
-                        Alpha = 1.570796327
-                    elif y[i][j][0] == y[i_cen][-1][0]:
-                        Alpha = 0
-                    else:
-                        Alpha = math.atan(math.fabs(y[i_cen][-1][0] - y[i][j][0])/math.fabs(x[i_cen][-1][0] - x[i][j][0]))
-
-                    # пункт 14 - смещение координат
-                    if (x[i_cen][-1][0] > x[i][j][0]):
-                        x_smesh = -1*( Sdvig*math.cos(Alpha))
-                    else:
-                        x_smesh = Sdvig*math.cos(Alpha)
-                    if (y[i_cen][-1][0] > y[i][j][0]):
-                        y_smesh = -1*(Sdvig*math.sin(Alpha))
-                    else:
-                        y_smesh = Sdvig*math.sin(Alpha)
-                    temp_x[i][j] += x_smesh
-                    temp_y[i][j] += y_smesh
-                    #Smech(x,y,x_smesh,y_smesh,i,j)
-
-                    i_cen += 1
-                    i_for_cen += 1
-                
-                j += 1
-                if (j == len(x[i])-2):          # для запихивания в конец (предпосл. место) первой точки, для правильной отрисовки
-                    temp_x[i][j] = temp_x[i][0]
-                    temp_y[i][j] = temp_y[i][0]
-
-        
-
-        p = 0
-        while (p < kol_yach):
-            o = 0
-            while (o < len(x[p]) - 2):
-                
-                x[p][o][0] += temp_x[p][o]
-                y[p][o][0] += temp_y[p][o]
-
-
-                o += 1
-            p += 1
-
-
-        i += 1
-        if (i == kol_yach):                 # рассчёт центральной точки
-            schet = 0
-            while (schet != kol_yach):
-                schet_1 = 0
-                schet_2 = 0
-                k = 0
-                while (k < len(x[schet])-2):
-                    schet_1 += x[schet][k][0]
-                    schet_2 += y[schet][k][0]
-                    k += 1
-                x[schet][-1][0] = schet_1/k
-                y[schet][-1][0] = schet_2/k
-                schet += 1
-
-            # переразчёт плозади
-            Plosh_new(x ,y , Ploshad_t, 1)
-
-            flag = 1
-            count += 1
-            for pis in range(kol_yach):     # проверка на окончание этой адской фигни
-                if ((Ploshad_t[pis]-Ploshad[pis])<=0.01):
-                    flag = 0
-            print (count, end='\n')
-
-            #temp_x = copy.deepcopy(x)
-            #temp_y = copy.deepcopy(y)
-
-            if (count%999==0):
-                #  f = open('output_bef.txt', 'w')
-
-                #  for item in range(kol_yach):
-                #     f.write(str(x[item]) + "--" + y[item] + '\n')
-                #  f.close()
-                
-                #for i in range(kol_yach):
-                #   plt.plot(temp_x[i], temp_y[i])
-                #plt.show()
-                
-                #  q = open('output_aft.txt','w')
-                #  for item in range(x):
-                #     q.write(str(x[item]) + "--" + y[item] + '\n')
-                #  q.close()
-                print('New Iteration')
-            #del temp_x[:]
-            #del temp_y[:]
-# тут будет конец общего геморра
-'''
 for i in range(kol_yach):
     plt.plot(x[i], y[i])
 
