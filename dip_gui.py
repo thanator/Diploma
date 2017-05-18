@@ -1,4 +1,7 @@
 from tkinter import *
+from choose import *
+
+
 
 class CREATE_GUI:
     
@@ -8,7 +11,7 @@ class CREATE_GUI:
         self.but = Button(root,text="Вывести", command = self.output)
         self.tex = Text(root,width=20,height=3,font="12",wrap=WORD)
         self.lab = Label(root, text="Введите размерматрицы для анаморфирования (1-20).", font="Arial 12")
-        self.butt = Button(root, text = "Make it!")
+        self.butt = Button(root, text = "Make it!",command=self.Work)
 
         root.minsize(width=500,height=300)
 
@@ -40,6 +43,8 @@ class CREATE_GUI:
         self.ent.grid_forget()
         self.but.grid_forget()
         self.tex.grid_forget()
+        self.butt.grid_forget()
+        Anamorph("book_1.xls")
         
         
 
