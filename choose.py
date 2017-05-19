@@ -345,7 +345,8 @@ def Anamorph(open_it):
         # plt.show()
         
 
-    for i in range(kol_yach):
-        plt.plot(x[i], y[i])
+    # for i in range(kol_yach):
+    #     plt.plot(x[i], y[i])
 
-    plt.show()
+    # plt.show()
+    return x, y

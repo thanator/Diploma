@@ -1,5 +1,6 @@
 import xlrd
 import xlwt
+import math
 
 
 
@@ -39,12 +40,11 @@ def create(size):
                     y -= 3
                     ws.write(3 + j, 4, x)
                     ws.write(3 + j, 5, y)
-                    ws.write(3 + j, 6, count+1)
-                   
+                    ws.write(3 + j, 6, count+1)                   
                 
                 i += 1
                 j += 1
-            ws.write(2 + j, 7, count+1)
+            ws.write(2 + j, 7, math.fabs(2*x-y)) # тут надо задавать коэф-фт
             x -= 3
             y += 3
             y_size += 1
