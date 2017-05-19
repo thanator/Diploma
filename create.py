@@ -2,11 +2,14 @@ import xlrd
 import xlwt
 import math
 import random
+from pic_work import *
 
 
 
 
 def create(size):
+    koef = PicWork("test.jpg", size)
+    
     wb = xlwt.Workbook()
     ws = wb.add_sheet('A Test Sheet', cell_overwrite_ok=True)
     x = y = 7
@@ -45,7 +48,7 @@ def create(size):
                 
                 i += 1
                 j += 1
-            ws.write(2 + j, 7, random.randint(1, 5)) # тут надо задавать коэф-фт
+            ws.write(2 + j, 7, koef[count]) # тут надо задавать коэф-фт
             x -= 3
             y += 3
             y_size += 1

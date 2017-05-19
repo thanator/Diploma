@@ -73,7 +73,7 @@ class CREATE_GUI:
         self.butt.grid_forget()
         self.ac.clear()
         create(self.size)
-        x, y = Anamorph("example.xls")
+        x, y = Anamorph("afgan.xls") # example.xls
         
         for i in range(len(x)):
            self.ac.plot(x[i], y[i])
@@ -91,19 +91,19 @@ class CREATE_GUI:
         try:
             self.size = int(s)
         except Exception:
-            self.tex.insert(END, "Введите число от 2 до 20")
+            self.tex.insert(END, "Введите число от 2 до 25")
             self.size = 0
             self.butt.grid_forget()
             pass
     
-        if (self.size > 1 and self.size < 21):
+        if (self.size > 1 and self.size < 26):
             self.tex.delete(1.0,END)
             self.tex.insert(END,"Будет " + s + "*" + s + " ячеек")
             self.butt.grid(row = 2, column = 1)
         else:
             self.size = 0
             self.tex.delete(1.0,END)
-            self.tex.insert(END, "Введите число от 2 до 20")
+            self.tex.insert(END, "Введите число от 2 до 25")
             self.butt.grid_forget()
         
 

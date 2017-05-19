@@ -333,9 +333,9 @@ def Anamorph(open_it):
             print(Ploshad_t[s])
 
         for pis in range(kol_yach):     # проверка на окончание этой адской фигни
-            if (math.fabs(Ploshad_t[pis]-Ploshad[pis])<=0.01):
+            if (math.fabs(Ploshad_t[pis]-Ploshad[pis])<=0.1):
                 i_for_cen += 1
-        if (i_for_cen == kol_yach):
+        if (i_for_cen/kol_yach > 0.75):
             flag=1
         else:
             i_for_cen=0
