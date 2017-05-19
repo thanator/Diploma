@@ -82,9 +82,6 @@ class CREATE_GUI:
         self.canvas.show()
         self.plot_appear()
 
-    
-
-        
 
 
     def output(self):
@@ -94,7 +91,7 @@ class CREATE_GUI:
         try:
             self.size = int(s)
         except Exception:
-            self.tex.insert(END, "Введите число от 1 до 20")
+            self.tex.insert(END, "Введите число от 2 до 20")
             self.size = 0
             self.butt.grid_forget()
             pass
@@ -106,12 +103,9 @@ class CREATE_GUI:
         else:
             self.size = 0
             self.tex.delete(1.0,END)
-            self.tex.insert(END, "Введите число от 1 до 20")
+            self.tex.insert(END, "Введите число от 2 до 20")
             self.butt.grid_forget()
         
-     
-
-
 
 root = Tk()
 

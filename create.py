@@ -1,6 +1,7 @@
 import xlrd
 import xlwt
 import math
+import random
 
 
 
@@ -44,7 +45,7 @@ def create(size):
                 
                 i += 1
                 j += 1
-            ws.write(2 + j, 7, math.fabs(2*x-y)) # тут надо задавать коэф-фт
+            ws.write(2 + j, 7, random.randint(1, 5)) # тут надо задавать коэф-фт
             x -= 3
             y += 3
             y_size += 1
