@@ -5,18 +5,18 @@ import xlrd
 import xlwt
 
 
-def res(mage, size):
+def res(mage, form, size):
 
-    with open(mage, 'r+b') as f:
+    with open(mage + form, 'r+b') as f:
         with Image.open(f) as image:
             cover = resizeimage.resize_cover(image, [size, size])
-            cover.save(mage, image.format)
+            cover.save(mage + "_temp" + form, image.format)
 
-def PicWork(mage, size):
+def PicWork(mage, form, size):
     wb = xlwt.Workbook()
     ws = wb.add_sheet('A Test Sheet', cell_overwrite_ok=True)
-    res(mage, size)
-    image = Image.open(mage) #Открываем изображение. 
+    res(mage, form, size)
+    image = Image.open(mage + "_temp" + form) #Открываем изображение. 
     draw = ImageDraw.Draw(image) #Создаем инструмент для рисования. 
     width = image.size[0] #Определяем ширину. 
     height = image.size[1] #Определяем высоту. 	
@@ -30,7 +30,7 @@ def PicWork(mage, size):
                     b = pix[i,  height - j-1][1]
                     c = pix[i,  height - j-1][2]
                     S = (a + b + c) // 3
-                    S = 255 - S
+                    #S = 255 - S
                     if (S == 0):
                         S = 1
                     koef.append(S)

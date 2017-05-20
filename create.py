@@ -8,7 +8,7 @@ from pic_work import *
 
 
 def create(size):
-    koef = PicWork("test.jpg", size)
+    koef = PicWork("test", ".jpg", size)
     
     wb = xlwt.Workbook()
     ws = wb.add_sheet('A Test Sheet', cell_overwrite_ok=True)

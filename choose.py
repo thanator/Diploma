@@ -122,7 +122,70 @@ def Smech(X_temp, Y_temp, x_smes, y_smes, ind_i, ind_j):
             j_ind += 1
         i_ind += 1
 
+def setka(open_it):
+    
+    RB = xlrd.open_workbook(open_it, formatting_info=True)
+    # выбираем активный лист
+    SHEET = RB.sheet_by_index(0)
 
+    # COL_OF_YACH = SHEET.row_values(1, 2, 3) -> 2
+
+    NUM_STROK = len(SHEET.col_values(6, 3))
+
+    i = 0
+
+    Kord_setka = [0] * NUM_STROK
+    for i in range(NUM_STROK):
+        Kord_setka[i] = [0] * 2
+        Kord_setka[i][0] = [0] * 2
+        # создание массива для считывания экселевского файла
+
+    Koef_t_Anamorph = []
+
+    num_yach = list(set())
+    i = 0
+    kol_yach = 0
+    while i < NUM_STROK:
+
+        Kord_setka[i][1] = SHEET.row_values(i + 3, 6, 7)    # ->Num
+        if i != 0 and Kord_setka[i][1] != Kord_setka[i - 1][1]:
+            Koef_t_Anamorph += SHEET.row_values(i + 2, 7, 8)
+            kol_yach += 1
+        Kord_setka[i][0][0] = SHEET.row_values(i + 3, 4, 5)  # ->X
+        Kord_setka[i][0][1] = SHEET.row_values(i + 3, 5, 6)  # ->Y
+        i += 1
+    # считывание экселевского файла
+    sis = 0
+    for pis in range(kol_yach):
+        sis += Koef_t_Anamorph[pis]
+
+    sis = (sis / (len(Koef_t_Anamorph)))
+
+    Koef_t_Anamorph.append(sis)
+    # Пoдсчёт коэф-то анаморфирования
+    x = [0] * kol_yach
+    y = [0] * kol_yach
+    # будущие Х и У
+    i = 0
+    k = 1
+    j = 0
+    schet = 0
+    for i in range(kol_yach):
+        while k == Kord_setka[j][1][0]:
+            j += 1
+            schet += 1
+        schet += 2
+        x[i] = [0] * schet
+        y[i] = [0] * schet
+        schet = 0
+        k += 1
+
+    zero_x = copy.deepcopy(x)
+    zero_y = copy.deepcopy(y)
+    # создание массива для будущего вывода
+    Setka_to_XY(x, y, Kord_setka, kol_yach)
+    return x, y
+    
 def Anamorph(open_it):
 
     RB = xlrd.open_workbook(open_it, formatting_info=True)
@@ -339,8 +402,9 @@ def Anamorph(open_it):
             flag=1
         else:
             i_for_cen=0
-        # for i in range(kol_yach):
-        #     plt.plot(x[i], y[i])
+        for i in range(kol_yach):
+            plt.plot(x[i], y[i])
+        plt.savefig("foo.jpg")
 
         # plt.show()
         
@@ -349,4 +413,9 @@ def Anamorph(open_it):
     #     plt.plot(x[i], y[i])
 
     # plt.show()
+    i = 0
+    # for i in range(kol_yach):
+    #     x[i][-1].pop(0)
+    #     y[i][-1].pop(0)
+
     return x, y
